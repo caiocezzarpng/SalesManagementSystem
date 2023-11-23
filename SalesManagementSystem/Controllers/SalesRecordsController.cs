@@ -22,7 +22,7 @@ namespace SalesWebMvc.Services
             //para ficar registrado na tela o intervalo das datas da busca, sem apagar depois que vier o resultado:
             if (!minDate.HasValue)
             {
-                minDate = new DateTime(DateTime.Now.Year, 1, 1);
+                minDate = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             }
             if (!maxDate.HasValue)
             {
@@ -41,7 +41,7 @@ namespace SalesWebMvc.Services
             //para ficar registrado na tela o intervalo das datas da busca, sem apagar depois que vier o resultado:
             if (!minDate.HasValue)
             {
-                minDate = new DateTime(DateTime.Now.Year, 1, 1);
+                minDate = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             }
             if (!maxDate.HasValue)
             {
