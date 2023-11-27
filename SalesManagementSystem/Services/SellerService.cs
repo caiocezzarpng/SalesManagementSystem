@@ -14,10 +14,7 @@ namespace SalesManagementSystem.Services
             _context = context;
         }
 
-        public async Task<List<Seller>> FindAllAsync()
-        {
-            return await _context.Seller.ToListAsync();
-        }
+        public async Task<List<Seller>> FindAllAsync() => await _context.Seller.ToListAsync();
 
         public async Task InsertAsync(Seller obj)
         {
@@ -27,7 +24,7 @@ namespace SalesManagementSystem.Services
 
         public async Task<Seller> FindByIdAsync(int id)
         {
-            return await _context.Seller.Include(obj => obj.Department).FirstOrDefaultAsync(obj => obj.Id == id);
+            return await _context.Seller.Include(obj => obj.Department).FirstOrDefaultAsync(obj => obj.Id == id) ?? null;
         }
 
         public async Task RemoveAsync(int id)

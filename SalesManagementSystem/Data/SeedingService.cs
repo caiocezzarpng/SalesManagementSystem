@@ -18,7 +18,7 @@ namespace SalesManagementSystem.Data
                 _context.Seller.Any() ||
                 _context.SalesRecord.Any())
             {
-                return; // DB has been seeded
+                return; 
             }
 
             Department d1 = new Department("Computers");

@@ -31,7 +31,7 @@ namespace SalesManagementSystem.Services
                 .ToListAsync();
         }
 
-        public async Task<List<IGrouping<Department?, SalesRecord>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
+        public async Task<List<IGrouping<Department, SalesRecord>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
         {
             var result = from obj in _context.SalesRecord select obj;
             if (minDate.HasValue)
