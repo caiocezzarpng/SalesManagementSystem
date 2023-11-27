@@ -32,6 +32,8 @@ namespace SalesManagementSystem.Models
 
         public Seller()
         {
+            this.Name = string.Empty;
+            this.Email = string.Empty;
         }
 
         public Seller(string name, string email, DateTime birthDate, double baseSalary, Department department)
@@ -53,7 +55,7 @@ namespace SalesManagementSystem.Models
             Sales.Remove(sr);
         }
 
-        public double TotalSales(DateTime initial, DateTime final)
+        public double TotalSales(DateTime? initial, DateTime? final)
         {
             return Sales.Where(sr => sr.Date >= initial && sr.Date <= final).Sum(sr => sr.Amount);
         }
