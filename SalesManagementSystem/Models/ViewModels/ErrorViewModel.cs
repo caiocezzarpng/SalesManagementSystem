@@ -1,10 +1,7 @@
 ﻿namespace SalesManagementSystem.Models.ViewModels
 {
-    public class ErrorViewModel
+    public record ErrorViewModel(string RequestId, string Message)
     {
-        public string RequestId { get; set; }
-        public string Message { get; set; }
-
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }
 }

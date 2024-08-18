@@ -8,11 +8,11 @@
 
         public Department()
         {
+            this.Name = string.Empty;
         }
 
-        public Department(int id, string name)
+        public Department(string name)
         {
-            Id = id;
             Name = name;
         }
 
@@ -21,7 +21,7 @@
             Sellers.Add(seller);
         }
 
-        public double TotalSales(DateTime initial, DateTime final)
+        public double TotalSales(DateTime? initial, DateTime? final)
         {
             return Sellers.Sum(seller => seller.TotalSales(initial, final));
         }
