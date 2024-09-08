@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using SalesManagementSystem.Data;
+using SalesManagementSystem.Models;
 using SalesManagementSystem.Services;
+using SalesManagementSystem.Services.Factory;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +26,9 @@ builder.Services.AddScoped<SeedingService>();
 builder.Services.AddScoped<SellerService>();
 builder.Services.AddScoped<DepartmentService>();
 builder.Services.AddScoped<SalesRecordService>();
+builder.Services.AddScoped<ReportFactory<SalesRecord>, SalesReportFactory>();
+builder.Services.AddScoped<ReportFactory<Department>, DepartmentsReportFactory>();
+builder.Services.AddScoped<ReportFactory<Seller>, SellersReportFactory>();
 
 var app = builder.Build();
 

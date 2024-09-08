@@ -2,16 +2,20 @@
 using Microsoft.EntityFrameworkCore;
 using SalesManagementSystem.Data;
 using SalesManagementSystem.Models;
+using SalesManagementSystem.Services.Factory;
 
 namespace SalesWebMvc.Controllers
 {
     public class DepartmentsController : Controller
     {
         private readonly SalesWebContext _context;
+        private readonly ReportFactory<Department> _reportFactory;
 
-        public DepartmentsController(SalesWebContext context)
+
+        public DepartmentsController(SalesWebContext context, ReportFactory<Department> reportFactory)
         {
             _context = context;
+            _reportFactory = reportFactory;
         }
 
         public async Task<IActionResult> Index()
@@ -141,6 +145,16 @@ namespace SalesWebMvc.Controllers
         private bool DepartmentExists(int id)
         {
             return (_context.Department?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateDepartmentsReport()
+        {
+            var departments = await _context.Department.ToListAsync();
+            var report = _reportFactory.CreateReport();
+            report.Generate(departments);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

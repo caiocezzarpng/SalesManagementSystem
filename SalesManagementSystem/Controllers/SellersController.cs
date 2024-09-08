@@ -3,6 +3,7 @@ using SalesManagementSystem.Models;
 using SalesManagementSystem.Models.ViewModels;
 using SalesManagementSystem.Services;
 using SalesManagementSystem.Services.Exceptions;
+using SalesManagementSystem.Services.Factory;
 using System.Diagnostics;
 
 namespace SalesWebMvc.Controllers
@@ -11,11 +12,13 @@ namespace SalesWebMvc.Controllers
     {
         private readonly SellerService _sellerService;
         private readonly DepartmentService _departmentService;
+        private readonly ReportFactory<Seller> _reportFactory;
 
-        public SellersController(SellerService sellerService, DepartmentService departmentService)
+        public SellersController(SellerService sellerService, DepartmentService departmentService, ReportFactory<Seller> reportFactory)
         {
             _sellerService = sellerService;
             _departmentService = departmentService;
+            _reportFactory = reportFactory;
         }
 
         public async Task<IActionResult> Index()
@@ -142,6 +145,16 @@ namespace SalesWebMvc.Controllers
         {
             var viewModel = new ErrorViewModel(Activity.Current?.Id ?? HttpContext.TraceIdentifier, message);
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateSellersReport()
+        {
+            var list = await _sellerService.FindAllAsync();
+            var report = _reportFactory.CreateReport();
+            report.Generate(list);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

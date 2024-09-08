@@ -1,15 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SalesManagementSystem.Models;
 using SalesManagementSystem.Services;
+using SalesManagementSystem.Services.Factory;
 
 namespace SalesWebMvc.Services
 {
     public class SalesRecordsController : Controller
     {
         private readonly SalesRecordService _salesRecordService;
+        private readonly ReportFactory<SalesRecord> _reportFactory;
 
-        public SalesRecordsController(SalesRecordService salesRecordService)
+        public SalesRecordsController(SalesRecordService salesRecordService, ReportFactory<SalesRecord> reportFactory)
         {
             _salesRecordService = salesRecordService;
+            _reportFactory = reportFactory;
         }
 
         public IActionResult Index()
@@ -55,5 +59,17 @@ namespace SalesWebMvc.Services
             return View(result);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GenerateSalesReport(DateTime? minDate, DateTime? maxDate)
+        {
+            minDate ??= new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            maxDate ??= DateTime.Now;
+
+            var salesRecords = await _salesRecordService.FindByDateAsync(minDate, maxDate);
+            var report = _reportFactory.CreateReport();
+            report.Generate(salesRecords);
+
+            return View(nameof(Index));
+        }
     }
 }
