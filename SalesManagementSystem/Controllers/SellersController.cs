@@ -150,10 +150,17 @@ namespace SalesWebMvc.Controllers
         [HttpPost]
         public async Task<IActionResult> GenerateSellersReport()
         {
-            var list = await _sellerService.FindAllAsync();
-            var report = _reportFactory.CreateReport();
-            report.Generate(list);
-
+            try
+            {
+                var list = await _sellerService.FindAllAsync();
+                var report = _reportFactory.CreateReport();
+                report.Generate(list);
+                TempData["success"] = "Report generated successfully";
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "An error occurred while generating the report: " + ex.Message;
+            }
             return RedirectToAction(nameof(Index));
         }
     }

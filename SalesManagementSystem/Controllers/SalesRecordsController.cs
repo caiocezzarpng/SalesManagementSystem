@@ -62,13 +62,20 @@ namespace SalesWebMvc.Services
         [HttpPost]
         public async Task<IActionResult> GenerateSalesReport(DateTime? minDate, DateTime? maxDate)
         {
-            minDate ??= new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            maxDate ??= DateTime.Now;
+            try
+            {
+                minDate ??= new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                maxDate ??= DateTime.Now;
 
-            var salesRecords = await _salesRecordService.FindByDateAsync(minDate, maxDate);
-            var report = _reportFactory.CreateReport();
-            report.Generate(salesRecords);
-
+                var salesRecords = await _salesRecordService.FindByDateAsync(minDate, maxDate);
+                var report = _reportFactory.CreateReport();
+                report.Generate(salesRecords);
+                TempData["success"] = "Report generated successfully";
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "An error occurred while generating the report: " + ex.Message;
+            }
             return View(nameof(Index));
         }
     }

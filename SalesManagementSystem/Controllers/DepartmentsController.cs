@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SalesManagementSystem.Data;
 using SalesManagementSystem.Models;
 using SalesManagementSystem.Services.Factory;
+using Exception = System.Exception;
 
 namespace SalesWebMvc.Controllers
 {
@@ -150,10 +151,17 @@ namespace SalesWebMvc.Controllers
         [HttpPost]
         public async Task<IActionResult> GenerateDepartmentsReport()
         {
-            var departments = await _context.Department.ToListAsync();
-            var report = _reportFactory.CreateReport();
-            report.Generate(departments);
-
+            try
+            {
+                var departments = await _context.Department.ToListAsync();
+                var report = _reportFactory.CreateReport();
+                report.Generate(departments);
+                TempData["success"] = "Report generated successfully";
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "An error occurred while generating the report: " + ex.Message;
+            }
             return RedirectToAction(nameof(Index));
         }
     }
