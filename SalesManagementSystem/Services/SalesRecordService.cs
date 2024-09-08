@@ -15,7 +15,16 @@ namespace SalesManagementSystem.Services
 
         public async Task<List<SalesRecord>> FindByDateAsync(DateTime? minDate, DateTime? maxDate)
         {
+            var cacheKey = $"simple-{minDate:yyyyMMdd}-{maxDate:yyyyMMdd}";
+            var cachedRecords = SalesRecordCache.Instance.Get(cacheKey);
+
+            if (cachedRecords != null && cachedRecords.Any())
+            {
+                return cachedRecords;
+            }
+
             var result = from obj in _context.SalesRecord select obj;
+
             if (minDate.HasValue)
             {
                 result = result.Where(x => x.Date >= minDate.Value);
@@ -24,15 +33,27 @@ namespace SalesManagementSystem.Services
             {
                 result = result.Where(x => x.Date <= maxDate.Value);
             }
-            return await result
+
+            var salesRecords = await result
                 .Include(x => x.Seller)
                 .Include(x => x.Seller.Department)
                 .OrderByDescending(x => x.Date)
                 .ToListAsync();
+
+            SalesRecordCache.Instance.Set(cacheKey, salesRecords);
+            return salesRecords;
         }
 
         public async Task<List<IGrouping<Department?, SalesRecord>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
         {
+            var cacheKey = $"group-{minDate:yyyyMMdd}-{maxDate:yyyyMMdd}";
+            var cachedGroupedRecords = SalesRecordCache.Instance.GetGrouped(cacheKey);
+
+            if (cachedGroupedRecords.Any())
+            {
+                return cachedGroupedRecords;
+            }
+
             var result = from obj in _context.SalesRecord select obj;
             if (minDate.HasValue)
             {
@@ -48,7 +69,9 @@ namespace SalesManagementSystem.Services
                 .OrderByDescending(x => x.Date)
                 .ToListAsync();
 
-            return data.GroupBy(s => s.Seller.Department).ToList();
+            var groupedRecords = data.GroupBy(s => s.Seller.Department).ToList();
+            SalesRecordCache.Instance.SetGrouped(cacheKey, groupedRecords);
+            return groupedRecords;
         }
     }
 }
